@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: entitlemate-backend
+    env: python
+    buildCommand: ""
+    startCommand: "python entitlemate_backend_api.py"
+    envVars:
+      - key: PORT
+        value: 10000
