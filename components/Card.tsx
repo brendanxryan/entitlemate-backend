@@ -22,8 +22,10 @@ interface CardProps {
 }
 
 export default function Card({ item, className = '' }: CardProps) {
+  // Only apply bg-white if no color class is present
+  const hasBg = className.includes('bg-');
   return (
-    <div className={`border rounded-xl p-4 shadow bg-white ${className}`}>
+    <div className={`border rounded-xl p-4 shadow ${hasBg ? '' : 'bg-white'} ${className}`}>
       <h2 className="text-xl font-semibold mb-1">{item.Name}</h2>
       <p className="text-gray-700">{item.Headline}</p>
       <p className="text-sm mt-2 text-gray-600">{item.Description}</p>

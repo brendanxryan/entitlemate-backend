@@ -31,6 +31,8 @@ interface FilterState {
   homeOwnership: string;
   relationshipStatus: string;
   lifeStageMoment: string;
+  cardTypes: string[];
+  lifeStages: string[];
 }
 
 export default function Home() {
@@ -43,7 +45,9 @@ export default function Home() {
     state: '',
     homeOwnership: '',
     relationshipStatus: '',
-    lifeStageMoment: ''
+    lifeStageMoment: '',
+    cardTypes: [],
+    lifeStages: []
   });
 
   useEffect(() => {
@@ -82,16 +86,26 @@ export default function Home() {
       // Split comma-separated values into arrays and normalize
       const itemAgeGroups = item.AgeGroup?.split(',').map(age => age.trim().toLowerCase()) || [];
       const itemPensionTypes = item.PaymentType?.split(',').map(type => type.trim().toLowerCase()) || [];
+      const itemLifeStages = item.LifeStage?.split(',').map(stage => stage.trim().toLowerCase()) || [];
+      const itemCardTypes = item.CardType?.split(',').map(type => type.trim().toLowerCase()) || [];
       
       // Normalize filter values
       const normalizedAgeGroups = filters.ageGroups.map(age => age.toLowerCase());
       const normalizedPensionTypes = filters.pensionTypes.map(type => type.toLowerCase());
+      const normalizedLifeStages = filters.lifeStages.map(stage => stage.toLowerCase());
+      const normalizedCardTypes = filters.cardTypes.map(type => type.toLowerCase());
       
       const ageMatch = normalizedAgeGroups.length === 0 || 
         normalizedAgeGroups.some(age => itemAgeGroups.includes(age));
       
       const pensionMatch = normalizedPensionTypes.length === 0 || 
         normalizedPensionTypes.some(p => itemPensionTypes.includes(p));
+      
+      const lifeStageMatch = normalizedLifeStages.length === 0 ||
+        normalizedLifeStages.some(stage => itemLifeStages.includes(stage));
+      
+      const cardTypeMatch = normalizedCardTypes.length === 0 ||
+        normalizedCardTypes.some(type => itemCardTypes.includes(type));
       
       const stateMatch = !filters.state || 
         item.State?.toLowerCase() === filters.state.toLowerCase() || 
@@ -106,7 +120,7 @@ export default function Home() {
       const stageMatch = !filters.lifeStageMoment || 
         item.LifeStageMoment?.toLowerCase() === filters.lifeStageMoment.toLowerCase();
 
-      return ageMatch && pensionMatch && stateMatch && homeMatch && relationMatch && stageMatch;
+      return ageMatch && pensionMatch && stateMatch && homeMatch && relationMatch && stageMatch && lifeStageMatch && cardTypeMatch;
     });
   }, [data, filters]);
 
@@ -127,7 +141,15 @@ export default function Home() {
       
       relationshipOptions: Array.from(new Set(data.map(item => item.RelationshipStatus).filter(Boolean))).sort(),
       
-      stageOptions: Array.from(new Set(data.map(item => item.LifeStageMoment).filter(Boolean))).sort()
+      stageOptions: Array.from(new Set(data.map(item => item.LifeStageMoment).filter(Boolean))).sort(),
+
+      cardTypeOptions: Array.from(new Set(data.flatMap(item => 
+        item.CardType?.split(',').map(t => t.trim()) || []
+      ))).filter(Boolean).sort(),
+
+      lifeStageOptions: Array.from(new Set(data.flatMap(item => 
+        item.LifeStage?.split(',').map(s => s.trim()) || []
+      ))).filter(Boolean).sort()
     };
   }, [data]);
 
@@ -167,6 +189,8 @@ export default function Home() {
         homeOptions={filterOptions.homeOptions}
         relationshipOptions={filterOptions.relationshipOptions}
         stageOptions={filterOptions.stageOptions}
+        cardTypeOptions={filterOptions.cardTypeOptions}
+        lifeStageOptions={filterOptions.lifeStageOptions}
       />
       {filteredData.length === 0 ? (
         <div className="text-center py-8">
@@ -174,10 +198,21 @@ export default function Home() {
           <p className="text-sm text-gray-500 mt-2">Try adjusting your filter criteria.</p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
-          {filteredData.map((item, i) => (
-            <Card key={i} item={item} />
-          ))}
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full">
+          {filteredData.map((item, i) => {
+            // Support State as array or string
+            const states = Array.isArray(item.State) ? item.State.map(s => s.toLowerCase()) : [item.State?.toLowerCase()];
+            let cardBg = '';
+            if (states.includes('nsw')) cardBg = 'bg-blue-50';
+            if (states.includes('all')) cardBg = 'bg-green-50';
+            return (
+              <Card 
+                key={i} 
+                item={item} 
+                className={cardBg}
+              />
+            );
+          })}
         </div>
       )}
     </div>
