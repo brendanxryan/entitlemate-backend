@@ -1,34 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Card from '../components/Card';
 import Filters from '../components/Filters';
 
 interface Entitlement {
   Name: string;
+  Type: string;
+  Category: string;
+  State: string;
+  AgeGroup: string;
+  LifeStage: string;
+  PaymentType: string;
+  RelationshipStatus: string;
+  HomeOwnership: string;
+  LifeStageMoment: string;
+  CardType: string;
+  Card: string;
   Headline: string;
   Description: string;
   GovLink: string;
   ValueEstimate: string;
-  State: string;
-  AgeGroup: string;
-  PaymentType: string;
-  HomeOwnership: string;
-  RelationshipStatus: string;
-  LifeStageMoment: string;
-  Card: string;
-  Category: string;
   Status: string;
-  Type: string;
+}
+
+interface FilterState {
+  ageGroups: string[];
+  pensionTypes: string[];
+  state: string;
+  homeOwnership: string;
+  relationshipStatus: string;
+  lifeStageMoment: string;
 }
 
 export default function Home() {
   const [data, setData] = useState<Entitlement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState({
-    ageGroups: [] as string[],
-    pensionTypes: [] as string[],
+  const [filters, setFilters] = useState<FilterState>({
+    ageGroups: [],
+    pensionTypes: [],
     state: '',
     homeOwnership: '',
     relationshipStatus: '',
@@ -66,40 +77,59 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const filteredData = data.filter((item) => {
-    // Split comma-separated values into arrays
-    const itemAgeGroups = item.AgeGroup?.split(',').map(age => age.trim()) || [];
-    const itemPensionTypes = item.PaymentType?.split(',').map(type => type.trim()) || [];
-    
-    const ageMatch = filters.ageGroups.length === 0 || 
-      filters.ageGroups.some(age => itemAgeGroups.includes(age));
-    
-    const pensionMatch = filters.pensionTypes.length === 0 || 
-      filters.pensionTypes.some(p => itemPensionTypes.includes(p));
-    
-    const stateMatch = !filters.state || 
-      item.State === filters.state || 
-      item.State === 'All';
-    
-    const homeMatch = !filters.homeOwnership || 
-      item.HomeOwnership === filters.homeOwnership;
-    
-    const relationMatch = !filters.relationshipStatus || 
-      item.RelationshipStatus === filters.relationshipStatus;
-    
-    const stageMatch = !filters.lifeStageMoment || 
-      item.LifeStageMoment === filters.lifeStageMoment;
+  const filteredData = useMemo(() => {
+    return data.filter((item) => {
+      // Split comma-separated values into arrays and normalize
+      const itemAgeGroups = item.AgeGroup?.split(',').map(age => age.trim().toLowerCase()) || [];
+      const itemPensionTypes = item.PaymentType?.split(',').map(type => type.trim().toLowerCase()) || [];
+      
+      // Normalize filter values
+      const normalizedAgeGroups = filters.ageGroups.map(age => age.toLowerCase());
+      const normalizedPensionTypes = filters.pensionTypes.map(type => type.toLowerCase());
+      
+      const ageMatch = normalizedAgeGroups.length === 0 || 
+        normalizedAgeGroups.some(age => itemAgeGroups.includes(age));
+      
+      const pensionMatch = normalizedPensionTypes.length === 0 || 
+        normalizedPensionTypes.some(p => itemPensionTypes.includes(p));
+      
+      const stateMatch = !filters.state || 
+        item.State?.toLowerCase() === filters.state.toLowerCase() || 
+        item.State?.toLowerCase() === 'all';
+      
+      const homeMatch = !filters.homeOwnership || 
+        item.HomeOwnership?.toLowerCase() === filters.homeOwnership.toLowerCase();
+      
+      const relationMatch = !filters.relationshipStatus || 
+        item.RelationshipStatus?.toLowerCase() === filters.relationshipStatus.toLowerCase();
+      
+      const stageMatch = !filters.lifeStageMoment || 
+        item.LifeStageMoment?.toLowerCase() === filters.lifeStageMoment.toLowerCase();
 
-    return ageMatch && pensionMatch && stateMatch && homeMatch && relationMatch && stageMatch;
-  });
+      return ageMatch && pensionMatch && stateMatch && homeMatch && relationMatch && stageMatch;
+    });
+  }, [data, filters]);
 
-  // Extract unique filter options from data
-  const ageOptions = Array.from(new Set(data.flatMap(item => item.AgeGroup?.split(',').map(a => a.trim()) || []))).filter(Boolean);
-  const pensionOptions = Array.from(new Set(data.flatMap(item => item.PaymentType?.split(',').map(p => p.trim()) || []))).filter(Boolean);
-  const stateOptions = Array.from(new Set(data.map(item => item.State).filter(Boolean)));
-  const homeOptions = Array.from(new Set(data.map(item => item.HomeOwnership).filter(Boolean)));
-  const relationshipOptions = Array.from(new Set(data.map(item => item.RelationshipStatus).filter(Boolean)));
-  const stageOptions = Array.from(new Set(data.map(item => item.LifeStageMoment).filter(Boolean)));
+  // Extract unique filter options from data with proper normalization
+  const filterOptions = useMemo(() => {
+    return {
+      ageOptions: Array.from(new Set(data.flatMap(item => 
+        item.AgeGroup?.split(',').map(a => a.trim()) || []
+      ))).filter(Boolean).sort(),
+      
+      pensionOptions: Array.from(new Set(data.flatMap(item => 
+        item.PaymentType?.split(',').map(p => p.trim()) || []
+      ))).filter(Boolean).sort(),
+      
+      stateOptions: Array.from(new Set(data.map(item => item.State).filter(Boolean))).sort(),
+      
+      homeOptions: Array.from(new Set(data.map(item => item.HomeOwnership).filter(Boolean))).sort(),
+      
+      relationshipOptions: Array.from(new Set(data.map(item => item.RelationshipStatus).filter(Boolean))).sort(),
+      
+      stageOptions: Array.from(new Set(data.map(item => item.LifeStageMoment).filter(Boolean))).sort()
+    };
+  }, [data]);
 
   if (loading) {
     return (
@@ -130,13 +160,13 @@ export default function Home() {
   return (
     <div className="p-6 space-y-6">
       <Filters
-        onFilterChange={(filters) => setFilters(filters)}
-        ageOptions={ageOptions}
-        pensionOptions={pensionOptions}
-        stateOptions={stateOptions}
-        homeOptions={homeOptions}
-        relationshipOptions={relationshipOptions}
-        stageOptions={stageOptions}
+        onFilterChange={(newFilters: FilterState) => setFilters(newFilters)}
+        ageOptions={filterOptions.ageOptions}
+        pensionOptions={filterOptions.pensionOptions}
+        stateOptions={filterOptions.stateOptions}
+        homeOptions={filterOptions.homeOptions}
+        relationshipOptions={filterOptions.relationshipOptions}
+        stageOptions={filterOptions.stageOptions}
       />
       {filteredData.length === 0 ? (
         <div className="text-center py-8">
