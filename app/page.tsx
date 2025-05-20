@@ -93,6 +93,14 @@ export default function Home() {
     return ageMatch && pensionMatch && stateMatch && homeMatch && relationMatch && stageMatch;
   });
 
+  // Extract unique filter options from data
+  const ageOptions = Array.from(new Set(data.flatMap(item => item.AgeGroup?.split(',').map(a => a.trim()) || []))).filter(Boolean);
+  const pensionOptions = Array.from(new Set(data.flatMap(item => item.PaymentType?.split(',').map(p => p.trim()) || []))).filter(Boolean);
+  const stateOptions = Array.from(new Set(data.map(item => item.State).filter(Boolean)));
+  const homeOptions = Array.from(new Set(data.map(item => item.HomeOwnership).filter(Boolean)));
+  const relationshipOptions = Array.from(new Set(data.map(item => item.RelationshipStatus).filter(Boolean)));
+  const stageOptions = Array.from(new Set(data.map(item => item.LifeStageMoment).filter(Boolean)));
+
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center min-h-screen">
@@ -121,7 +129,15 @@ export default function Home() {
 
   return (
     <div className="p-6 space-y-6">
-      <Filters onFilterChange={(filters) => setFilters(filters)} />
+      <Filters
+        onFilterChange={(filters) => setFilters(filters)}
+        ageOptions={ageOptions}
+        pensionOptions={pensionOptions}
+        stateOptions={stateOptions}
+        homeOptions={homeOptions}
+        relationshipOptions={relationshipOptions}
+        stageOptions={stageOptions}
+      />
       {filteredData.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-600">No entitlements found matching your filters.</p>

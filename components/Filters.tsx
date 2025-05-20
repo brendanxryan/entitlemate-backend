@@ -10,17 +10,15 @@ interface FiltersProps {
     relationshipStatus: string;
     lifeStageMoment: string;
   }) => void;
+  ageOptions: string[];
+  pensionOptions: string[];
+  stateOptions: string[];
+  homeOptions: string[];
+  relationshipOptions: string[];
+  stageOptions: string[];
 }
 
-// Updated options to match backend data
-const ageOptions = ['<55', '55-60', '60-65', '65-67', '67-75', '75+'];
-const pensionOptions = ['AgePensionFull', 'AgePensionPart', 'Commonwealth Seniors Health Card'];
-const stateOptions = ['NSW', 'VIC', 'QLD', 'All'];
-const homeOptions = ['HomeOwner', 'Non-homeowner'];
-const relationshipOptions = ['Single', 'Couple'];
-const stageOptions = ['Turning67', 'StartingaFamily', 'AgedCare', 'RetirementVillage', 'Downsizing'];
-
-export default function Filters({ onFilterChange }: FiltersProps) {
+export default function Filters({ onFilterChange, ageOptions, pensionOptions, stateOptions, homeOptions, relationshipOptions, stageOptions }: FiltersProps) {
   const [ageGroups, setAgeGroups] = useState<string[]>([]);
   const [pensionTypes, setPensionTypes] = useState<string[]>([]);
   const [state, setState] = useState('');
