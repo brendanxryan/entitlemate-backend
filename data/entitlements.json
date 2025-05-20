@@ -1,0 +1,28 @@
+[
+    {
+      "name": "NSW Gas Rebate",
+      "headline": "Save on your gas bill",
+      "description": "Rebate of up to $121/year for eligible NSW concession card holders.",
+      "govLink": "https://www.service.nsw.gov.au/nsw-gas-rebate",
+      "valueEstimate": "$121",
+      "state": ["NSW"],
+      "ageGroups": ["60–65", "65–67", "67–75"],
+      "pensionType": ["AP", "CSHC"],
+      "homeOwnership": ["Homeowner", "Non-homeowner"],
+      "relationshipStatus": ["Single", "Couple"],
+      "lifeStageMoment": ["Turning67"]
+    },
+    {
+      "name": "Concessional PBS",
+      "headline": "Save on prescription medications",
+      "description": "Reduced co-payments for medicines listed on the PBS.",
+      "govLink": "https://www.servicesaustralia.gov.au/pbs-safety-net",
+      "valueEstimate": "$1,387",
+      "state": ["All"],
+      "ageGroups": ["60–65", "65–67", "67–75", "75+"],
+      "pensionType": ["CSHC", "AP"],
+      "homeOwnership": ["Homeowner", "Non-homeowner"],
+      "relationshipStatus": ["Single", "Couple"],
+      "lifeStageMoment": ["AgedCare"]
+    }
+  ]
