@@ -10,6 +10,7 @@ interface Entitlement {
   Category: string;
   State: string;
   AgeGroup: string;
+  ageGroups?: string[];
   LifeStage: string;
   PaymentType: string;
   RelationshipStatus: string;
@@ -83,8 +84,10 @@ export default function Home() {
 
   const filteredData = useMemo(() => {
     return data.filter((item) => {
-      // Split comma-separated values into arrays and normalize
-      const itemAgeGroups = item.AgeGroup?.split(',').map(age => age.trim().toLowerCase()) || [];
+      // Use ageGroups as array, fallback to []
+      const itemAgeGroups = Array.isArray(item.ageGroups)
+        ? item.ageGroups.map(age => age.trim().toLowerCase())
+        : [];
       const itemPensionTypes = item.PaymentType?.split(',').map(type => type.trim().toLowerCase()) || [];
       const itemLifeStages = item.LifeStage?.split(',').map(stage => stage.trim().toLowerCase()) || [];
       const itemCardTypes = item.CardType?.split(',').map(type => type.trim().toLowerCase()) || [];
@@ -128,7 +131,7 @@ export default function Home() {
   const filterOptions = useMemo(() => {
     return {
       ageOptions: Array.from(new Set(data.flatMap(item => 
-        item.AgeGroup?.split(',').map(a => a.trim()) || []
+        Array.isArray(item.ageGroups) ? item.ageGroups.map(a => a.trim()) : []
       ))).filter(Boolean).sort(),
       
       pensionOptions: Array.from(new Set(data.flatMap(item => 
