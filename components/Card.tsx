@@ -15,12 +15,15 @@ interface CardProps {
     Category: string;
     Status: string;
     Type: string;
+    CardType: string;
+    LifeStage: string;
   };
+  className?: string;
 }
 
-export default function Card({ item }: CardProps) {
+export default function Card({ item, className = '' }: CardProps) {
   return (
-    <div className="border rounded-xl p-4 shadow bg-white">
+    <div className={`border rounded-xl p-4 shadow bg-white ${className}`}>
       <h2 className="text-xl font-semibold mb-1">{item.Name}</h2>
       <p className="text-gray-700">{item.Headline}</p>
       <p className="text-sm mt-2 text-gray-600">{item.Description}</p>

@@ -9,6 +9,8 @@ interface FiltersProps {
     homeOwnership: string;
     relationshipStatus: string;
     lifeStageMoment: string;
+    cardTypes: string[];
+    lifeStages: string[];
   }) => void;
   ageOptions: string[];
   pensionOptions: string[];
@@ -16,15 +18,29 @@ interface FiltersProps {
   homeOptions: string[];
   relationshipOptions: string[];
   stageOptions: string[];
+  cardTypeOptions: string[];
+  lifeStageOptions: string[];
 }
 
-export default function Filters({ onFilterChange, ageOptions, pensionOptions, stateOptions, homeOptions, relationshipOptions, stageOptions }: FiltersProps) {
+export default function Filters({ 
+  onFilterChange, 
+  ageOptions, 
+  pensionOptions, 
+  stateOptions, 
+  homeOptions, 
+  relationshipOptions, 
+  stageOptions,
+  cardTypeOptions,
+  lifeStageOptions 
+}: FiltersProps) {
   const [ageGroups, setAgeGroups] = useState<string[]>([]);
   const [pensionTypes, setPensionTypes] = useState<string[]>([]);
   const [state, setState] = useState('');
   const [homeOwnership, setHomeOwnership] = useState('');
   const [relationshipStatus, setRelationshipStatus] = useState('');
   const [lifeStageMoment, setLifeStageMoment] = useState('');
+  const [cardTypes, setCardTypes] = useState<string[]>([]);
+  const [lifeStages, setLifeStages] = useState<string[]>([]);
 
   useEffect(() => {
     console.log('Filters updated:', {
@@ -34,6 +50,8 @@ export default function Filters({ onFilterChange, ageOptions, pensionOptions, st
       homeOwnership,
       relationshipStatus,
       lifeStageMoment,
+      cardTypes,
+      lifeStages
     });
     
     onFilterChange({
@@ -43,8 +61,10 @@ export default function Filters({ onFilterChange, ageOptions, pensionOptions, st
       homeOwnership,
       relationshipStatus,
       lifeStageMoment,
+      cardTypes,
+      lifeStages
     });
-  }, [ageGroups, pensionTypes, state, homeOwnership, relationshipStatus, lifeStageMoment, onFilterChange]);
+  }, [ageGroups, pensionTypes, state, homeOwnership, relationshipStatus, lifeStageMoment, cardTypes, lifeStages, onFilterChange]);
 
   const toggle = (list: string[], value: string, setter: Function) => {
     setter(list.includes(value) ? list.filter(v => v !== value) : [...list, value]);
@@ -147,21 +167,43 @@ export default function Filters({ onFilterChange, ageOptions, pensionOptions, st
       </div>
 
       <div>
-        <label htmlFor="life-stage" className="font-semibold mb-2 block">Life Stage Moment</label>
-        <select
-          id="life-stage"
-          name="life-stage"
-          value={lifeStageMoment}
-          onChange={e => setLifeStageMoment(e.target.value)}
-          className="border rounded px-2 py-1 bg-white w-full"
-        >
-          <option value="">Any</option>
-          {stageOptions.map(opt => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
+        <label htmlFor="life-stage" className="font-semibold mb-2 block">Life Stage</label>
+        <div className="flex flex-wrap gap-2" role="group" aria-labelledby="life-stage">
+          {lifeStageOptions.map(option => (
+            <button
+              key={option}
+              id={`life-stage-${option}`}
+              name="life-stage"
+              type="button"
+              onClick={() => toggle(lifeStages, option, setLifeStages)}
+              className={`px-3 py-1 rounded border ${
+                lifeStages.includes(option) ? 'bg-purple-500 text-white' : 'bg-white'
+              }`}
+            >
+              {option}
+            </button>
           ))}
-        </select>
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="card-type" className="font-semibold mb-2 block">Card Type</label>
+        <div className="flex flex-wrap gap-2" role="group" aria-labelledby="card-type">
+          {cardTypeOptions.map(option => (
+            <button
+              key={option}
+              id={`card-type-${option}`}
+              name="card-type"
+              type="button"
+              onClick={() => toggle(cardTypes, option, setCardTypes)}
+              className={`px-3 py-1 rounded border ${
+                cardTypes.includes(option) ? 'bg-orange-500 text-white' : 'bg-white'
+              }`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
       </div>
     </form>
   );
