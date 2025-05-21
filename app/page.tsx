@@ -233,21 +233,21 @@ export default function Home() {
     cardType: []
   });
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch(`${config.apiUrl}/data`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
+    const fetchData = async () => {
+      try {
+      const response = await fetch(`${config.apiUrl}/api/entitlements`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
       const data = await response.json();
       setData(data);
     } catch (error) {
       console.error('Error fetching data:', error);
       setError('Failed to load entitlements. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
+      } finally {
+        setLoading(false);
+      }
+    };
 
   useEffect(() => {
     fetchData();
