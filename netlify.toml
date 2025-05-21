@@ -3,6 +3,7 @@
   publish = ".next"
 
 [build.environment]
+  NEXT_PUBLIC_API_URL = "https://entitlemate-backend.onrender.com"
   NEXT_TELEMETRY_DISABLED = "1"
   NODE_VERSION = "18"
   NPM_FLAGS = "--legacy-peer-deps"
