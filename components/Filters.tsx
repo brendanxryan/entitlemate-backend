@@ -6,9 +6,9 @@ interface FiltersProps {
     ageGroups: string[];
     pensionTypes: string[];
     state: string;
-    homeOwnership: string;
-    relationshipStatus: string;
-    lifeStageMoment: string;
+    homeOwnership: string[];
+    relationshipStatus: string[];
+    lifeStageMoment: string[];
     cardTypes: string[];
     lifeStages: string[];
   }) => void;
@@ -36,9 +36,9 @@ export default function Filters({
   const [ageGroups, setAgeGroups] = useState<string[]>([]);
   const [pensionTypes, setPensionTypes] = useState<string[]>([]);
   const [state, setState] = useState('');
-  const [homeOwnership, setHomeOwnership] = useState('');
-  const [relationshipStatus, setRelationshipStatus] = useState('');
-  const [lifeStageMoment, setLifeStageMoment] = useState('');
+  const [homeOwnership, setHomeOwnership] = useState<string[]>([]);
+  const [relationshipStatus, setRelationshipStatus] = useState<string[]>([]);
+  const [lifeStageMoment, setLifeStageMoment] = useState<string[]>([]);
   const [cardTypes, setCardTypes] = useState<string[]>([]);
   const [lifeStages, setLifeStages] = useState<string[]>([]);
 
@@ -131,54 +131,62 @@ export default function Filters({
       </div>
 
       <div>
-        <label htmlFor="home-ownership" className="font-semibold mb-2 block">Home Ownership</label>
-        <select
-          id="home-ownership"
-          name="home-ownership"
-          value={homeOwnership}
-          onChange={e => setHomeOwnership(e.target.value)}
-          className="border rounded px-2 py-1 bg-white w-full"
-        >
-          <option value="">Any</option>
-          {homeOptions.map(opt => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
+        <label className="font-semibold mb-2 block">Home Ownership</label>
+        <div className="flex flex-wrap gap-2" role="group" aria-labelledby="home-ownership">
+          {homeOptions.map(option => (
+            <label key={option} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={homeOwnership.includes(option)}
+                onChange={() => toggle(homeOwnership, option, setHomeOwnership)}
+              />
+              {option}
+            </label>
           ))}
-        </select>
+        </div>
       </div>
 
       <div>
-        <label htmlFor="relationship-status" className="font-semibold mb-2 block">Relationship Status</label>
-        <select
-          id="relationship-status"
-          name="relationship-status"
-          value={relationshipStatus}
-          onChange={e => setRelationshipStatus(e.target.value)}
-          className="border rounded px-2 py-1 bg-white w-full"
-        >
-          <option value="">Any</option>
-          {relationshipOptions.map(opt => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
+        <label className="font-semibold mb-2 block">Relationship Status</label>
+        <div className="flex flex-wrap gap-2" role="group" aria-labelledby="relationship-status">
+          {relationshipOptions.map(option => (
+            <label key={option} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={relationshipStatus.includes(option)}
+                onChange={() => toggle(relationshipStatus, option, setRelationshipStatus)}
+              />
+              {option}
+            </label>
           ))}
-        </select>
+        </div>
       </div>
 
       <div>
-        <label htmlFor="life-stage" className="font-semibold mb-2 block">Life Stage</label>
+        <label className="font-semibold mb-2 block">Life Stage</label>
         <div className="flex flex-wrap gap-2" role="group" aria-labelledby="life-stage">
           {lifeStageOptions.map(option => (
             <button
               key={option}
-              id={`life-stage-${option}`}
-              name="life-stage"
               type="button"
               onClick={() => toggle(lifeStages, option, setLifeStages)}
-              className={`px-3 py-1 rounded border ${
-                lifeStages.includes(option) ? 'bg-purple-500 text-white' : 'bg-white'
-              }`}
+              className={`px-3 py-1 rounded border ${lifeStages.includes(option) ? 'bg-purple-500 text-white' : 'bg-white'}`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label className="font-semibold mb-2 block">Life Stage Moment</label>
+        <div className="flex flex-wrap gap-2" role="group" aria-labelledby="life-stage-moment">
+          {stageOptions.map(option => (
+            <button
+              key={option}
+              type="button"
+              onClick={() => toggle(lifeStageMoment, option, setLifeStageMoment)}
+              className={`px-3 py-1 rounded border ${lifeStageMoment.includes(option) ? 'bg-blue-500 text-white' : 'bg-white'}`}
             >
               {option}
             </button>

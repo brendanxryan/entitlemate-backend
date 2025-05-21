@@ -26,9 +26,9 @@ export default function Card({ item, className = '' }: CardProps) {
   const hasBg = className.includes('bg-');
   return (
     <div className={`border rounded-xl p-4 shadow ${hasBg ? '' : 'bg-white'} ${className}`}>
-      <h2 className="text-xl font-semibold mb-1">{item.Name}</h2>
-      <p className="text-gray-700">{item.Headline}</p>
-      <p className="text-sm mt-2 text-gray-600">{item.Description}</p>
+      <div className="mb-2 font-bold text-lg text-gray-800">{item.Headline}</div>
+      <div className="inline-block bg-blue-100 text-blue-900 font-semibold px-3 py-1 rounded mb-2" style={{fontSize: '1.1rem'}}>{item.Name}</div>
+      <p className="text-gray-700 mt-2">{item.Description}</p>
       {item.ValueEstimate && (
         <p className="text-sm mt-2 font-medium text-green-600">
           Estimated value: ${item.ValueEstimate}
