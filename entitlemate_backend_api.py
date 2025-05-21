@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import json
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Allow Render to bind to 0.0.0.0 for production hosting
 PORT = int(os.environ.get("PORT", 5000))
@@ -37,4 +39,4 @@ def index():
     return "EntitleMate backend is running. Use /upload to post data and /data to fetch it."
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5050)
+    app.run(host="0.0.0.0", port=PORT)

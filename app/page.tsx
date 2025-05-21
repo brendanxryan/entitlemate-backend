@@ -235,7 +235,8 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/entitlements`);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://entitlemate-backend.onrender.com';
+        const response = await fetch(`${apiUrl}/data`);
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
